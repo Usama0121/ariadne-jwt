@@ -1,0 +1,20 @@
+type UserNode {
+    _id:String
+    username:String
+    email:String
+    first_name:String
+    last_name:String
+    is_superuser:Boolean
+    is_staff:Boolean
+    is_active:Boolean
+    date_joined:String
+}
+
+type Query {
+    user: UserNode
+}
+
+type Mutation {
+    verifyToken(token: String!): Verify
+    refreshToken(token: String!): Refresh
+}

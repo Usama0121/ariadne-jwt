@@ -1,0 +1,4 @@
+type Mutation {
+    verifyToken(token: String!): Verify
+    refreshToken(token: String!): Refresh
+}
