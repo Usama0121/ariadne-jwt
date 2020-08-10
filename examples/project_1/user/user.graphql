@@ -9,7 +9,9 @@ type UserNode {
     is_active:Boolean
     date_joined:String
 }
-
+extend type Query {
+    me:UserNode
+}
 extend type Mutation {
     verifyToken(token: String!): VerifyToken
     refreshToken(token: String!): RefreshToken

@@ -1,3 +1,6 @@
 type Mutation {
     test_mutation: Boolean
 }
+type Query {
+    test_query:Boolean
+}
