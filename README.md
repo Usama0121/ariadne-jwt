@@ -120,3 +120,27 @@ mutation TokenAuth($username: String!, $password: String!) {
     }
 }
 ~~~
+
+## Authentication in GraphQL queries
+
+Now in order to access protected API you must include the ``Authorization: JWT <token>`` header.
+you can use the ``login_required()`` decorator for your *resolvers*:
+
+~~~python
+from ariadne import QueryType
+from ariadne_jwt.decorators import login_required
+type_defs='''
+type UserNode {
+    username:String
+    email: String
+}
+type Query {
+    me: UserNode
+}
+'''
+query=QueryType()
+@query.field('me')
+@login_required
+def resolve_viewer(self, info, **kwargs):
+    return info.context.get('request').user
+~~~
