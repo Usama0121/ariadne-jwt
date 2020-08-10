@@ -87,3 +87,36 @@ mutation RefreshToken($token: String!) {
     }
 }
 ~~~
+
+## Customizing
+
+If you want to customize the ``tokenAuth`` behavior, you'll need to extend the ``TokenAuth`` type and write a resolver with @token_auth decorator.
+
+~~~python
+from ariadne_jwt.decorators import token_auth
+extended_type_defs='''
+type UserNode {
+    id
+    username
+    email
+}
+extend type TokenAuth {
+    user: UserNode
+}
+'''
+
+@token_auth
+def resolve_token_auth(obj, info, **kwargs):
+    return { 'user':info.context.get('request').user }
+~~~
+
+~~~graphql
+mutation TokenAuth($username: String!, $password: String!) {
+    tokenAuth(username: $username, password: $password) {
+        token
+        user {
+            id
+        }
+    }
+}
+~~~
