@@ -20,15 +20,15 @@ class TokenAuthTests(GraphQLSchemaTestCase):
         '''
         super().setUp()
 
-    # @patch('ariadne_jwt.decorators.login')
-    # def test_token_auth(self, *args):
-    #     response = self.client.execute(self.query, **{
-    #         'username': self.user.get_username(),
-    #         'password': 'dolphins',
-    #     })
-    #
-    #     payload = get_payload(response.data['tokenAuth']['token'])
-    #     self.assertEqual(self.user.get_username(), payload['username'])
+    @patch('ariadne_jwt.decorators.login')
+    def test_token_auth(self, *args):
+        response = self.client.execute(self.query, **{
+            'username': self.user.get_username(),
+            'password': 'dolphins',
+        })
+
+        payload = get_payload(response.data['tokenAuth']['token'])
+        self.assertEqual(self.user.get_username(), payload['username'])
 
     def test_token_auth_invalid_credentials(self):
         response = self.client.execute(self.query, **{
