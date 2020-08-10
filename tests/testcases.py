@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.core.handlers.wsgi import WSGIRequest
@@ -16,7 +16,7 @@ class GraphQLRequestFactory(RequestFactory):
 
     def execute(self, query, **kwargs):
         request = WSGIRequest
-        return graphql_sync(self._schema, query, variable_values=kwargs, context_value=MagicMock())
+        return graphql_sync(self._schema, query, variable_values=kwargs, context_value=mock.Mock())
 
 
 class GraphQLClient(GraphQLRequestFactory, Client):

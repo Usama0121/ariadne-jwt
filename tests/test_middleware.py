@@ -1,16 +1,17 @@
 import json
-from unittest.mock import MagicMock, patch
+from unittest import mock
 from django.http import JsonResponse
 from .testcases import GraphQLJWTTestCase
 from ariadne_jwt.middleware import JSONWebTokenMiddleware
 from ariadne_jwt import settings as ariadne_jwt_settings
+
 
 class MiddlewareTests(GraphQLJWTTestCase):
 
     def setUp(self):
         super().setUp()
 
-        self.get_response_mock = MagicMock(return_value=JsonResponse({}))
+        self.get_response_mock = mock.Mock(return_value=JsonResponse({}))
         self.middleware = JSONWebTokenMiddleware(self.get_response_mock)
 
     def test_authenticate(self):
@@ -25,7 +26,7 @@ class MiddlewareTests(GraphQLJWTTestCase):
 
         self.get_response_mock.assert_called_once_with(request)
 
-    @patch('ariadne_jwt.middleware.authenticate', return_value=None)
+    @mock.patch('ariadne_jwt.middleware.authenticate', return_value=None)
     def test_user_not_authenticate(self, *args):
         headers = {
             'HTTP_AUTHORIZATION': '{0} {1}'.format(
