@@ -1,4 +1,4 @@
 type Mutation {
-    verifyToken(token: String!): Verify
-    refreshToken(token: String!): Refresh
+    verifyToken(token: String!): VerifyToken
+    refreshToken(token: String!): RefreshToken
 }

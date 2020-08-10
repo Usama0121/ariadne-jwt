@@ -47,7 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'ariadne_jwt.middleware.JWTMiddleware',
+    'ariadne_jwt.middleware.JSONWebTokenMiddleware',
 ]
 
 ROOT_URLCONF = 'project_1.urls'
@@ -99,7 +99,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'ariadne_jwt.backends.JWTBackend',
+    'ariadne_jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend'
 ]
 

@@ -8,22 +8,20 @@ import django
 from django.conf import settings
 from django.test.runner import DiscoverRunner
 
-DEFAULT_SETTINGS = dict(
-    INSTALLED_APPS=[
-        'django.contrib.auth',
-        'django.contrib.contenttypes'
-    ],
+DEFAULT_SETTINGS = dict(INSTALLED_APPS=[
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+],
     DATABASES={
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'test'
-        }
+        },
     },
-    SECRET_KEY='secret',
+    SECRET_KEY='test',
     AUTHENTICATION_BACKENDS=[
-        'ariadne_jwt.backends.JWTBackend'
+        'django.contrib.auth.backends.ModelBackend',
+        'ariadne_jwt.backends.JSONWebTokenBackend',
     ],
-    ROOT_URLCONF='tests.urls'
 )
 
 

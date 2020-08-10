@@ -2,16 +2,16 @@ from ariadne.scalars import ScalarType
 from graphql.type.scalars import MAX_INT, MIN_INT
 from graphql import StringValueNode, BooleanValueNode, IntValueNode, FloatValueNode, ListValueNode, ObjectValueNode
 
-genericScalar = ScalarType('GenericScalar')
+GenericScalar = ScalarType('GenericScalar')
 
 
-@genericScalar.serializer
-@genericScalar.value_parser
+@GenericScalar.serializer
+@GenericScalar.value_parser
 def identity(value):
     return value
 
 
-@genericScalar.literal_parser
+@GenericScalar.literal_parser
 def parse_literal(ast):
     if isinstance(ast, (StringValueNode, BooleanValueNode)):
         return ast.value

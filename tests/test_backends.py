@@ -1,5 +1,5 @@
-from .base import GraphQLJWTTestCase
-from ariadne_jwt.backends import JWTBackend
+from .testcases import GraphQLJWTTestCase
+from ariadne_jwt.backends import JSONWebTokenBackend
 from ariadne_jwt.exceptions import GraphQLJWTError
 from ariadne_jwt import settings as ariadne_jwt_settings
 
@@ -14,7 +14,7 @@ class BackendsTests(GraphQLJWTTestCase):
         }
 
         request = self.factory.get('/', **headers)
-        user = JWTBackend().authenticate(request=request)
+        user = JSONWebTokenBackend().authenticate(request=request)
 
         self.assertEqual(user, self.user)
 
@@ -27,18 +27,18 @@ class BackendsTests(GraphQLJWTTestCase):
         request = self.factory.get('/', **headers)
 
         with self.assertRaises(GraphQLJWTError):
-            JWTBackend().authenticate(request=request)
+            JSONWebTokenBackend().authenticate(request=request)
 
     def test_authenticate_null_request(self):
-        user = JWTBackend().authenticate(request=None)
+        user = JSONWebTokenBackend().authenticate(request=None)
         self.assertIsNone(user)
 
     def test_authenticate_missing_token(self):
         request = self.factory.get('/')
-        user = JWTBackend().authenticate(request=request)
+        user = JSONWebTokenBackend().authenticate(request=request)
 
         self.assertIsNone(user)
 
     def test_get_user(self):
-        user = JWTBackend().get_user(self.user.username)
+        user = JSONWebTokenBackend().get_user(self.user.get_username())
         self.assertEqual(user, self.user)

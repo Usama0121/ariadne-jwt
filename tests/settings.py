@@ -6,14 +6,12 @@ INSTALLED_APPS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'test',
     },
 }
 
 SECRET_KEY = 'test'
 
 AUTHENTICATION_BACKENDS = [
-    'ariadne_jwt.backends.JWTBackend',
+    'django.contrib.auth.backends.ModelBackend',
+    'ariadne_jwt.backends.JSONWebTokenBackend',
 ]
-
-ROOT_URLCONF = 'tests.urls'

@@ -1,6 +1,5 @@
-from .mutations import verify, refresh, jwt_schema
-from .scaler import genericScalar
+from .mutations import resolve_verify, resolve_refresh, resolve_token_auth, jwt_schema
+from .scalar import GenericScalar
 
-__all__ = ['verify', 'refresh', 'genericScalar', 'jwt_schema']
-
-
+# from .mutations import
+__all__ = ['resolve_verify', 'resolve_refresh', 'resolve_token_auth', 'jwt_schema', 'GenericScalar', ]
