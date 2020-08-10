@@ -26,51 +26,20 @@ AUTHENTICATION_BACKENDS = [
 ]
 ~~~
 
-## Login
-~~~python
-import ariadne
-from ariadne_jwt.shortcuts import get_token
-from django.contrib.auth import authenticate, login
-    
-type_defs = '''
-    scalar GenericScalar
-    
-    type Mutation {
-        ...
-        LogIn(username:String!, password:String!): GenericScalar
-        ...
-    }
-'''
-
-mutation = ariadne.MutationType()
-@mutation.field('LogIn')
-def resolve_login(obj, info, **kwargs):
-    user = authenticate(**kwargs)
-
-    if user is None:
-        raise Exception('Please enter a correct username and password')
-
-    if not user.is_active:
-        raise Exception('It seems your account has been disabled')
-
-    login(info.context, user)
-    return {'token': get_token(user)}
-~~~
-
-Verify and refresh token
-----------
+## Schema
 
 Add mutations to your GraphQL schema
 
 ~~~python
 import ariadne
-from ariadne_jwt import resolve_verify, resolve_refresh, GenericScalar, jwt_schema
+from ariadne_jwt import resolve_verify, resolve_refresh, resolve_token_auth, jwt_schema, GenericScalar
 
 type_defs = '''
     type Mutation {
         ...
         verifyToken(token: String!): VerifyToken
         refreshToken(token: String!): RefreshToken
+        tokenAuth(username: String!, password:String!): TokenAuth
         ...
     }
     '''
@@ -79,15 +48,30 @@ mutation = ariadne.MutationType()
     
 mutation.set_field('verifyToken', resolve_verify)
 mutation.set_field('refreshToken', resolve_refresh)
+mutation.set_field('tokenAuth', resolve_token_auth)
 
 schema = ariadne.make_executable_schema([type_defs, jwt_schema], [mutation, GenericScalar])
 ~~~
 
-``verifyToken`` to confirm that the JWT is valid.
+
+``tokenAuth`` to authenticate the user and obtain the JSON Web Token.
+
+The resolver uses User's model `USERNAME_FIELD`_, which by default is ``username``.
 
 ~~~graphql
-mutation {
-    verifyToken(token: "...") {
+mutation TokenAuth($username: String!, $password: String!) {
+    tokenAuth(username: $username, password: $password) {
+        token
+    }
+}
+~~~
+
+
+``verifyToken`` to confirm that the token is valid.
+
+~~~graphql
+mutation VerifyToken($token:String!) {
+    verifyToken(token: $token) {
         payload
     }
 }
@@ -96,8 +80,8 @@ mutation {
 ``refreshToken`` to obtain a brand new token with renewed expiration time for non-expired tokens.
 
 ~~~graphql
-mutation {
-    refreshToken(token: "...") {
+mutation RefreshToken($token: String!) {
+    refreshToken(token: $token) {
         token
         payload
     }
