@@ -15,3 +15,6 @@ extend type Mutation {
     refreshToken(token: String!): RefreshToken
     tokenAuth(username: String!, password:String!): TokenAuth
 }
+extend type TokenAuth {
+    user: UserNode
+}
