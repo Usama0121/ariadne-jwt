@@ -20,8 +20,7 @@ class TokenAuthTests(GraphQLSchemaTestCase):
         '''
         super().setUp()
 
-    @patch('ariadne_jwt.decorators.login')
-    def test_token_auth(self, *args):
+    def test_token_auth(self):
         response = self.client.execute(self.query, **{
             'username': self.user.get_username(),
             'password': 'dolphins',

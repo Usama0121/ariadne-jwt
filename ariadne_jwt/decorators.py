@@ -1,6 +1,6 @@
 from functools import wraps
 
-from django.contrib.auth import authenticate, get_user_model, login
+from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import ugettext_lazy as _
 
 from promise import Promise, is_thenable
@@ -12,24 +12,26 @@ from .shortcuts import get_token
 def token_auth(f):
     @wraps(f)
     def wrapper(root, info, password, **kwargs):
-        def on_resolve(value):
-            user, payload = value
+        def on_resolve(values):
+            user, payload = values
             payload['token'] = get_token(user)
             return payload
 
         username = kwargs.get(get_user_model().USERNAME_FIELD)
-        user = authenticate(username=username, password=password)
+        user = authenticate(info.context.get('request'), username=username, password=password)
 
         if user is None:
             raise exceptions.GraphQLJWTError(
                 _('Please, enter valid credentials'))
 
-        login(info.context.get('request'), user)
+        if hasattr(info.context.get('request'), 'user'):
+            info.context.get('request').user = user
+
         result = f(root, info, **kwargs)
-        value = (user, result)
+        values = (user, result)
         # Improved mutation with thenable check
         if is_thenable(result):
-            return Promise.resolve(value).then(on_resolve)
-        return on_resolve(value)
+            return Promise.resolve(values).then(on_resolve)
+        return on_resolve(values)
 
     return wrapper
