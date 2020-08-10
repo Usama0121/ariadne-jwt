@@ -1,4 +1,3 @@
 type Mutation {
-    verifyToken(token: String!): VerifyToken
-    refreshToken(token: String!): RefreshToken
+    test_mutation: Boolean
 }
