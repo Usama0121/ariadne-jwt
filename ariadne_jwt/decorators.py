@@ -14,7 +14,7 @@ def token_auth(f):
     def wrapper(root, info, password, **kwargs):
         def on_resolve(value):
             user, payload = value
-            payload.token = get_token(user)
+            payload['token'] = get_token(user)
             return payload
 
         username = kwargs.get(get_user_model().USERNAME_FIELD)

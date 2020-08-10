@@ -53,4 +53,4 @@ def resolve_refresh(obj, info, token, **kwargs):
 
 @token_auth
 def resolve_token_auth(obj, info, **kwargs):
-    return Promise()
+    return {}
