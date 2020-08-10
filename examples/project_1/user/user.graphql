@@ -11,5 +11,5 @@ type UserNode {
 }
 
 extend type Mutation {
-    LogIn(username:String!, password:String!): GenericScalar
+    tokenAuth(username: String!, password:String!): TokenAuth
 }
