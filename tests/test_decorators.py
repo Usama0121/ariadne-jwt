@@ -92,15 +92,13 @@ class DecoratorsTests(UserTestCase):
         info_mock = mock.MagicMock()
         token = get_token(self.user)
 
-        headers = {
+        type(info_mock.context.get('request')).META = {
             jwt_settings.JWT_AUTH_HEADER: '{0} {1}'.format(
                 jwt_settings.JWT_AUTH_HEADER_PREFIX,
                 token),
         }
 
-        type(info_mock.context.get('request')).META = mock.PropertyMock(return_value=headers)
-
         result = wrapped(None, info_mock, password='dolphins', username=self.user.get_username())
 
         self.assertTrue(is_thenable(result))
-        info_mock.context.get('request').Meta.__delitem__.assert_called_once_with(jwt_settings.JWT_AUTH_HEADER)
+        self.assertNotIn(jwt_settings.JWT_AUTH_HEADER, info_mock.context.get('request').META)
