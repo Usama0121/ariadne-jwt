@@ -23,7 +23,7 @@ type_defs = '''
 '''
 
 
-def refresh(obj, info, refresh_token, **kwargs):
+def long_running_refresh_token(obj, info, refresh_token, **kwargs):
     refresh_token = get_refresh_token(refresh_token)
 
     if refresh_token.is_expired(info.context):
