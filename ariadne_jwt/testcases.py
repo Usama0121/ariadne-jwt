@@ -11,6 +11,13 @@ from .shortcuts import get_token
 
 class SchemaRequestFactory(RequestFactory):
 
+    def __init__(self, **defaults):
+        super(SchemaRequestFactory, self).__init__(**defaults)
+        self._schema = None
+
+    def schema(self, type_defs, *resolvers, directives=None):
+        self._schema = ariadne.make_executable_schema(type_defs, *resolvers, directives=directives)
+
     def execute(self, context, query, variables):
         response = ariadne.graphql_sync(self._schema, {'query': query, 'variables': variables}, context_value=context)
         response = ExecutionResult(response[1].get('data'), response[1].get('errors'))
@@ -22,15 +29,11 @@ class JSONWebTokenClient(SchemaRequestFactory, Client):
     def __init__(self, **defaults):
         super(JSONWebTokenClient, self).__init__(**defaults)
         self._credentials = {}
-        self._schema = None
 
     def request(self, **request):
         request = WSGIRequest(self._base_environ(**request))
         request.user = authenticate(request)
         return request
-
-    def schema(self, type_defs, *resolvers, directives=None):
-        self._schema = ariadne.make_executable_schema(type_defs, *resolvers, directives=directives)
 
     def credentials(self, **kwargs):
         self._credentials = kwargs
