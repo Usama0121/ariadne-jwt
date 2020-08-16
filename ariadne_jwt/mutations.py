@@ -1,7 +1,7 @@
 from calendar import timegm
 from datetime import datetime
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from . import exceptions
 from .settings import jwt_settings
@@ -34,7 +34,7 @@ def resolve_verify(obj, info, token, **kwargs):
 def resolve_refresh(obj, info, token, **kwargs):
     payload = get_payload(token, info.context)
     user = get_user_by_payload(payload)
-    orig_iat = payload.get('orig_iat')
+    orig_iat = payload.get('origIat')
 
     if orig_iat:
         utcnow = timegm(datetime.utcnow().utctimetuple())
@@ -43,9 +43,9 @@ def resolve_refresh(obj, info, token, **kwargs):
         if utcnow > expiration:
             raise exceptions.JSONWebTokenError(_('RefreshToken has expired'))
     else:
-        raise exceptions.JSONWebTokenError(_('orig_iat field is required'))
+        raise exceptions.JSONWebTokenError(_('origIat field is required'))
 
-    token = get_token(user, orig_iat=orig_iat)
+    token = get_token(user, origIat=orig_iat)
 
     return {'token': token, 'payload': payload}
 

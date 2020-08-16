@@ -154,10 +154,10 @@ class UserTests(JSONWebTokenTestCase):
         self.user = get_user_model().objects.create_user(username='test', password='dolphins')
         self.client.authenticate(self.user)
         self.client.schema(type_defs, resolvers, directives=directives)
-    def test_users(self):
+    def test_get_user(self):
             query = '''
-            query GetUsers($username: String) {
-                users(username: $username) {
+            query GetUser($username: String) {
+                user(username: $username) {
                     id
                 }
             }

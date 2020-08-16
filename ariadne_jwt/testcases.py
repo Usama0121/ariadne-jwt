@@ -51,7 +51,7 @@ class JSONWebTokenClient(SchemaRequestFactory, Client):
         }
 
     def logout(self):
-        self._credentials.pop('HTTP_AUTHORIZATION', None)
+        self._credentials.pop(jwt_settings.JWT_AUTH_HEADER, None)
 
 
 class JSONWebTokenTestCase(testcases.TestCase):

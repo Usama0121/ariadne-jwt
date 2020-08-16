@@ -83,7 +83,7 @@ class RefreshTokenTests(SchemaTestCase):
 
         self.assertNotEqual(self.token, token)
         self.assertEqual(self.user.get_username(), data['payload']['username'])
-        self.assertEqual(self.payload['orig_iat'], payload['orig_iat'])
+        self.assertEqual(self.payload['origIat'], payload['origIat'])
 
     def test_refresh_expired(self):
         with patch('ariadne_jwt.mutations.datetime') as datetime_mock:
