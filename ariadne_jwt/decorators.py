@@ -79,7 +79,7 @@ def token_auth(f):
         user = authenticate(info.context.get('request'), username=username, password=password)
 
         if user is None:
-            raise exceptions.GraphQLJWTError(
+            raise exceptions.JSONWebTokenError(
                 _('Please, enter valid credentials'))
 
         if hasattr(info.context.get('request'), 'user'):

@@ -41,9 +41,9 @@ def resolve_refresh(obj, info, token, **kwargs):
         expiration = orig_iat + jwt_settings.JWT_REFRESH_EXPIRATION_DELTA.total_seconds()
 
         if utcnow > expiration:
-            raise exceptions.GraphQLJWTError(_('RefreshToken has expired'))
+            raise exceptions.JSONWebTokenError(_('RefreshToken has expired'))
     else:
-        raise exceptions.GraphQLJWTError(_('orig_iat field is required'))
+        raise exceptions.JSONWebTokenError(_('orig_iat field is required'))
 
     token = get_token(user, orig_iat=orig_iat)
 

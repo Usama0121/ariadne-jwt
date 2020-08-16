@@ -1,5 +1,5 @@
 from ariadne_jwt.settings import jwt_settings
-from ariadne_jwt.exceptions import GraphQLJWTError
+from ariadne_jwt.exceptions import JSONWebTokenError
 from ariadne_jwt.backends import JSONWebTokenBackend
 
 from .testcases import TestCase
@@ -27,7 +27,7 @@ class BackendsTests(TestCase):
 
         request = self.factory.get('/', **headers)
 
-        with self.assertRaises(GraphQLJWTError):
+        with self.assertRaises(JSONWebTokenError):
             JSONWebTokenBackend().authenticate(request=request)
 
     def test_authenticate_null_request(self):
