@@ -86,7 +86,7 @@ class RefreshTokenTests(SchemaTestCase):
         self.assertEqual(self.payload['origIat'], payload['origIat'])
 
     def test_refresh_expired(self):
-        with patch('ariadne_jwt.mutations.datetime') as datetime_mock:
+        with patch('ariadne_jwt.utils.datetime') as datetime_mock:
             datetime_mock.utcnow.return_value = (datetime.utcnow() +
                                                  jwt_settings.JWT_REFRESH_EXPIRATION_DELTA +
                                                  timedelta(seconds=1))
