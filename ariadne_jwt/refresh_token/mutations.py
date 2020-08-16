@@ -3,19 +3,19 @@ from calendar import timegm
 from django.utils.translation import ugettext as _
 
 from .. import exceptions
-from ..shortcuts import get_token
-from ..utils import get_payload
+from ..settings import jwt_settings
 from .shortcuts import get_refresh_token
 
 
 def resolve_refresh_token(obj, info, refresh_token, **kwargs):
+    context = info.context
     refresh_token = get_refresh_token(refresh_token)
 
-    if refresh_token.is_expired(info.context):
+    if refresh_token.is_expired(context):
         raise exceptions.JSONWebTokenError(_('Refresh token is expired'))
 
-    token = get_token(refresh_token.user, info.context)
-    payload = get_payload(token, info.context)
+    payload = jwt_settings.JWT_PAYLOAD_HANDLER(refresh_token.user, context)
+    token = jwt_settings.JWT_ENCODE_HANDLER(payload, context)
     refreshed_token = refresh_token.rotate().token
 
     return {'token': token, 'payload': payload, 'refresh_token': refreshed_token}
