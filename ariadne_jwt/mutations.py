@@ -29,11 +29,11 @@ jwt_schema = '''
 
 
 def resolve_verify(obj, info, token, **kwargs):
-    return {'payload': get_payload(token)}
+    return {'payload': get_payload(token, info.context)}
 
 
 def resolve_refresh(obj, info, token, **kwargs):
-    payload = get_payload(token)
+    payload = get_payload(token, info.context)
     user = get_user_by_payload(payload)
     orig_iat = payload.get('orig_iat')
 
