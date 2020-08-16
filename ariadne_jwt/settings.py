@@ -2,6 +2,7 @@ from datetime import timedelta
 from importlib import import_module
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.test.signals import setting_changed
 import six
 
@@ -21,12 +22,14 @@ DEFAULTS = {
     'JWT_ENCODE_HANDLER': 'ariadne_jwt.utils.jwt_encode',
     'JWT_DECODE_HANDLER': 'ariadne_jwt.utils.jwt_decode',
     'JWT_PAYLOAD_HANDLER': 'ariadne_jwt.utils.jwt_payload',
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER': (lambda payload: payload.get(get_user_model().USERNAME_FIELD)),
 }
 
 IMPORT_STRINGS = (
     'JWT_ENCODE_HANDLER',
     'JWT_DECODE_HANDLER',
     'JWT_PAYLOAD_HANDLER',
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER',
 )
 
 
