@@ -26,6 +26,7 @@ DEFAULTS = {
     'JWT_DECODE_HANDLER': 'ariadne_jwt.utils.jwt_decode',
     'JWT_PAYLOAD_HANDLER': 'ariadne_jwt.utils.jwt_payload',
     'JWT_PAYLOAD_GET_USERNAME_HANDLER': (lambda payload: payload.get(get_user_model().USERNAME_FIELD)),
+    'JWT_REFRESH_EXPIRED_HANDLER': 'ariadne_jwt.utils.refresh_has_expired',
 }
 
 IMPORT_STRINGS = (
@@ -33,6 +34,7 @@ IMPORT_STRINGS = (
     'JWT_DECODE_HANDLER',
     'JWT_PAYLOAD_HANDLER',
     'JWT_PAYLOAD_GET_USERNAME_HANDLER',
+    'JWT_REFRESH_EXPIRED_HANDLER',
 )
 
 
