@@ -1,17 +1,7 @@
-import contextlib
-
-from ariadne_jwt import settings
+from django.test import override_settings
 
 
-@contextlib.contextmanager
-def override_settings(**override):
-    restore = {}
+class override_jwt_settings(override_settings):
 
-    try:
-        for var, value in override.items():
-            restore[var] = getattr(settings, var)
-            setattr(settings, var, value)
-        yield
-    finally:
-        for var, value in restore.items():
-            setattr(settings, var, value)
+    def __init__(self, **kwargs):
+        super(override_jwt_settings, self).__init__(GRAPHQL_JWT=kwargs)

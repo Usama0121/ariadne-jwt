@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 from unittest.mock import patch
 
-from ariadne_jwt import settings
+from ariadne_jwt.settings import jwt_settings
 from ariadne_jwt.shortcuts import get_token
 from ariadne_jwt.utils import get_payload
 
 from .testcases import GraphQLSchemaTestCase
-from .decorators import override_settings
+from .decorators import override_jwt_settings
 
 
 class TokenAuthTests(GraphQLSchemaTestCase):
@@ -88,14 +88,14 @@ class RefreshTokenTests(GraphQLSchemaTestCase):
     def test_refresh_expired(self):
         with patch('ariadne_jwt.mutations.datetime') as datetime_mock:
             datetime_mock.utcnow.return_value = (datetime.utcnow() +
-                                                 settings.JWT_REFRESH_EXPIRATION_DELTA +
+                                                 jwt_settings.JWT_REFRESH_EXPIRATION_DELTA +
                                                  timedelta(seconds=1))
 
             response = self.client.execute(self.query, token=self.token)
 
         self.assertTrue(response.errors)
 
-    @override_settings(JWT_ALLOW_REFRESH=False)
+    @override_jwt_settings(JWT_ALLOW_REFRESH=False)
     def test_refresh_error(self, *args):
         token = get_token(self.user)
         response = self.client.execute(self.query, token=token)

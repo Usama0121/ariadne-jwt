@@ -1,7 +1,7 @@
 from .testcases import GraphQLJWTTestCase
 from ariadne_jwt.backends import JSONWebTokenBackend
 from ariadne_jwt.exceptions import GraphQLJWTError
-from ariadne_jwt import settings as ariadne_jwt_settings
+from ariadne_jwt.settings import jwt_settings
 
 
 class BackendsTests(GraphQLJWTTestCase):
@@ -9,7 +9,7 @@ class BackendsTests(GraphQLJWTTestCase):
     def test_authenticate(self):
         headers = {
             'HTTP_AUTHORIZATION': '{0} {1}'.format(
-                ariadne_jwt_settings.JWT_AUTH_HEADER_PREFIX,
+                jwt_settings.JWT_AUTH_HEADER_PREFIX,
                 self.token),
         }
 
@@ -21,7 +21,7 @@ class BackendsTests(GraphQLJWTTestCase):
     def test_authenticate_fail(self):
         headers = {
             'HTTP_AUTHORIZATION': '{} invalid'.format(
-                ariadne_jwt_settings.JWT_AUTH_HEADER_PREFIX),
+                jwt_settings.JWT_AUTH_HEADER_PREFIX),
         }
 
         request = self.factory.get('/', **headers)

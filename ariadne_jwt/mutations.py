@@ -3,9 +3,9 @@ from datetime import datetime
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-from promise import Promise
 
-from . import settings
+from . import exceptions
+from .settings import jwt_settings
 from .decorators import token_auth
 from .shortcuts import get_token
 from .utils import get_payload, get_user_by_payload
@@ -39,12 +39,12 @@ def resolve_refresh(obj, info, token, **kwargs):
 
     if orig_iat:
         utcnow = timegm(datetime.utcnow().utctimetuple())
-        expiration = orig_iat + settings.JWT_REFRESH_EXPIRATION_DELTA.total_seconds()
+        expiration = orig_iat + jwt_settings.JWT_REFRESH_EXPIRATION_DELTA.total_seconds()
 
         if utcnow > expiration:
-            raise ValidationError(_('RefreshToken has expired'))
+            raise exceptions.GraphQLJWTError(_('RefreshToken has expired'))
     else:
-        raise ValidationError(_('orig_iat field is required'))
+        raise exceptions.GraphQLJWTError(_('orig_iat field is required'))
 
     token = get_token(user, orig_iat=orig_iat)
 

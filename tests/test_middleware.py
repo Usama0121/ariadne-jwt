@@ -3,7 +3,7 @@ from unittest import mock
 from django.http import JsonResponse
 from .testcases import GraphQLJWTTestCase
 from ariadne_jwt.middleware import JSONWebTokenMiddleware
-from ariadne_jwt import settings as ariadne_jwt_settings
+from ariadne_jwt.settings import jwt_settings
 
 
 class MiddlewareTests(GraphQLJWTTestCase):
@@ -17,7 +17,7 @@ class MiddlewareTests(GraphQLJWTTestCase):
     def test_authenticate(self):
         headers = {
             'HTTP_AUTHORIZATION': '{0} {1}'.format(
-                ariadne_jwt_settings.JWT_AUTH_HEADER_PREFIX,
+                jwt_settings.JWT_AUTH_HEADER_PREFIX,
                 self.token),
         }
 
@@ -30,7 +30,7 @@ class MiddlewareTests(GraphQLJWTTestCase):
     def test_user_not_authenticate(self, *args):
         headers = {
             'HTTP_AUTHORIZATION': '{0} {1}'.format(
-                ariadne_jwt_settings.JWT_AUTH_HEADER_PREFIX,
+                jwt_settings.JWT_AUTH_HEADER_PREFIX,
                 self.token),
         }
 
@@ -42,7 +42,7 @@ class MiddlewareTests(GraphQLJWTTestCase):
     def test_graphql_error(self):
         headers = {
             'HTTP_AUTHORIZATION': '{} invalid'.format(
-                ariadne_jwt_settings.JWT_AUTH_HEADER_PREFIX),
+                jwt_settings.JWT_AUTH_HEADER_PREFIX),
         }
 
         request = self.factory.get('/', **headers)
@@ -61,7 +61,7 @@ class MiddlewareTests(GraphQLJWTTestCase):
     def test_user_is_authenticated(self):
         headers = {
             'HTTP_AUTHORIZATION': '{0} {1}'.format(
-                ariadne_jwt_settings.JWT_AUTH_HEADER_PREFIX,
+                jwt_settings.JWT_AUTH_HEADER_PREFIX,
                 self.token),
         }
 

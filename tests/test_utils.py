@@ -7,7 +7,7 @@ from django.test import RequestFactory
 from ariadne_jwt import utils
 from ariadne_jwt.exceptions import GraphQLJWTError
 
-from .decorators import override_settings
+from .decorators import override_jwt_settings
 from .testcases import UserTestCase
 
 
@@ -24,12 +24,12 @@ class UtilsTests(UserTestCase):
 
         self.assertEqual(payload[username_field], 'test')
 
-    @override_settings(JWT_AUDIENCE='test')
+    @override_jwt_settings(JWT_AUDIENCE='test')
     def test_payload_audience(self):
         payload = utils.jwt_payload(self.user)
         self.assertEqual(payload['aud'], 'test')
 
-    @override_settings(JWT_ISSUER='test')
+    @override_jwt_settings(JWT_ISSUER='test')
     def test_payload_issuer(self):
         payload = utils.jwt_payload(self.user)
         self.assertEqual(payload['iss'], 'test')
@@ -44,8 +44,7 @@ class UtilsTests(UserTestCase):
 
         self.assertIsNone(header)
 
-    @override_settings(JWT_VERIFY_EXPIRATION=True)
-    @override_settings(JWT_EXPIRATION_DELTA=timedelta(seconds=-1))
+    @override_jwt_settings(JWT_VERIFY_EXPIRATION=True, JWT_EXPIRATION_DELTA=timedelta(seconds=-1))
     def test_payload_expired_signature(self):
         payload = utils.jwt_payload(self.user)
         token = utils.jwt_encode(payload)
@@ -57,7 +56,7 @@ class UtilsTests(UserTestCase):
         payload = utils.jwt_payload(self.user)
         token = utils.jwt_encode(payload)
 
-        with override_settings(JWT_AUDIENCE='test'):
+        with override_jwt_settings(JWT_AUDIENCE='test'):
             with self.assertRaises(GraphQLJWTError):
                 utils.get_payload(token)
 
