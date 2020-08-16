@@ -35,16 +35,16 @@ class TokenAuthTests(SchemaTestCase):
 
     def test_token_auth(self):
         response = self.client.execute(self.query, {
-            'username': self.user.get_username(),
+            self.user.USERNAME_FIELD: self.user.get_username(),
             'password': 'dolphins',
         })
 
         payload = get_payload(response.data['tokenAuth']['token'])
-        self.assertEqual(self.user.get_username(), payload['username'])
+        self.assertEqual(self.user.get_username(), payload[self.user.USERNAME_FIELD])
 
     def test_token_auth_invalid_credentials(self):
         response = self.client.execute(self.query, {
-            'username': self.user.get_username(),
+            self.user.USERNAME_FIELD: self.user.get_username(),
             'password': 'wrong',
         })
 
@@ -66,7 +66,7 @@ class VerifyTokenTests(SchemaTestCase):
     def test_verify(self):
         response = self.client.execute(self.query, token=self.token)
         payload = response.data['verifyToken']['payload']
-        self.assertEqual(self.user.get_username(), payload['username'])
+        self.assertEqual(self.user.get_username(), payload[self.user.USERNAME_FIELD])
 
     def test_verify_invalid_token(self):
         response = self.client.execute(self.query, token='invalid')
@@ -94,7 +94,7 @@ class RefreshTokenTests(SchemaTestCase):
         payload = get_payload(token)
 
         self.assertNotEqual(self.token, token)
-        self.assertEqual(self.user.get_username(), data['payload']['username'])
+        self.assertEqual(self.user.get_username(), data['payload'][self.user.USERNAME_FIELD])
         self.assertEqual(self.payload['origIat'], payload['origIat'])
         self.assertLess(self.payload['exp'], payload['exp'])
 

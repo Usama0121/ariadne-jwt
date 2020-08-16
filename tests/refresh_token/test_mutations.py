@@ -1,17 +1,9 @@
 from ariadne_jwt.utils import get_payload
 from ariadne_jwt.shortcuts import create_refresh_token, get_refresh_token
-import ariadne_jwt
-from ariadne_jwt.settings import jwt_settings
+
 from ..testcases import SchemaTestCase
 from ..decorators import override_jwt_settings
 from ..test_mutations import back_to_the_future, refresh_expired
-
-
-# class LongRunningRefreshMixin(SchemaTestCase):
-#
-#     @override_jwt_settings(JWT_LONG_RUNNING_REFRESH_TOKEN=True)
-#     def setUp(self):
-#         super().setUp()
 
 
 class TokenAuthTests(SchemaTestCase):
@@ -30,13 +22,13 @@ class TokenAuthTests(SchemaTestCase):
     @override_jwt_settings(JWT_LONG_RUNNING_REFRESH_TOKEN=True)
     def test_token_auth(self):
         response = self.client.execute(self.query, {
-            'username': self.user.get_username(),
+            self.user.USERNAME_FIELD: self.user.get_username(),
             'password': 'dolphins',
         })
         data = response.data['tokenAuth']
         payload = get_payload(data['token'])
         refresh_token = get_refresh_token(data['refresh_token'])
-        self.assertEqual(self.user.get_username(), payload['username'])
+        self.assertEqual(self.user.get_username(), payload[self.user.USERNAME_FIELD])
         self.assertEqual(refresh_token.user, self.user)
 
 

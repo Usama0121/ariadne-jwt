@@ -1,22 +1,15 @@
 from datetime import timedelta
 from unittest.mock import patch, Mock, PropertyMock
 
-from django.contrib.auth import get_user_model
-from django.test import RequestFactory
-
 from ariadne_jwt import utils
 from ariadne_jwt.exceptions import JSONWebTokenError
 from ariadne_jwt.settings import jwt_settings
 
 from .decorators import override_jwt_settings
-from .testcases import UserTestCase
+from .testcases import TestCase
 
 
-class UtilsTests(UserTestCase):
-
-    def setUp(self):
-        self.user = get_user_model().objects.create_user(username='test')
-        self.factory = RequestFactory()
+class UtilsTests(TestCase):
 
     @patch('django.contrib.auth.models.User.get_username', return_value=Mock(pk='test'))
     def test_payload_foreign_key_pk(self, *args):
@@ -41,9 +34,9 @@ class UtilsTests(UserTestCase):
         }
 
         request = self.factory.get('/', **headers)
-        header = utils.get_authorization_header(request)
+        authorization_header = utils.get_authorization_header(request)
 
-        self.assertIsNone(header)
+        self.assertIsNone(authorization_header)
 
     @override_jwt_settings(JWT_AUTH_HEADER='HTTP_AUTHORIZATION_TOKEN')
     def test_custom_authorization_header(self):
@@ -52,9 +45,9 @@ class UtilsTests(UserTestCase):
         }
 
         request = self.factory.get('/', **headers)
-        header = utils.get_authorization_header(request)
+        authorization_header = utils.get_authorization_header(request)
 
-        self.assertEqual(header, 'token')
+        self.assertEqual(authorization_header, 'token')
 
     @override_jwt_settings(JWT_VERIFY_EXPIRATION=True, JWT_EXPIRATION_DELTA=timedelta(seconds=-1))
     def test_payload_expired_signature(self):
