@@ -10,6 +10,7 @@ from . import exceptions
 from .shortcuts import get_token
 from .settings import jwt_settings
 from .utils import get_authorization_header
+from .refresh_token.shortcuts import create_refresh_token
 
 __all__ = [
     'user_passes_test',
@@ -69,6 +70,8 @@ def token_auth(f):
         def on_resolve(values):
             user, payload = values
             payload['token'] = get_token(user, info.context)
+            if jwt_settings.JWT_LONG_TIME_REFRESH:
+                payload['refresh_token'] = create_refresh_token(user).token
             return payload
 
         username = kwargs.get(get_user_model().USERNAME_FIELD)

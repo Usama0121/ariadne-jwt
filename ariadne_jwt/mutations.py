@@ -21,11 +21,15 @@ jwt_schema = '''
     }
     type TokenAuth {
         token: String
+        payload: GenericScalar
     }
 '''
 if jwt_settings.JWT_LONG_TIME_REFRESH:
     jwt_schema += '''
     extend type RefreshToken {
+        refresh_token: String
+    }
+    extend type TokenAuth {
         refresh_token: String
     }
     '''
