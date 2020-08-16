@@ -1,18 +1,11 @@
 from datetime import timedelta
-from unittest.mock import patch
 
 from django.test import TestCase
+
 from ariadne_jwt import settings
 
 
 class SettingsTests(TestCase):
-
-    @patch.dict('os.environ', {'TEST': 'hours=1,days=1'})
-    def test_env_timedelta_cast(self):
-        env = settings.Env()
-        var = env.timedelta('TEST')
-
-        self.assertEqual(var, timedelta(hours=1, days=1))
 
     def test_perform_import(self):
         f = settings.perform_import(id, '')

@@ -1,14 +1,12 @@
 from unittest import mock
 
 from django.contrib.auth import get_user_model
-from django.core.handlers.wsgi import WSGIRequest
 from django.test import Client, RequestFactory, TestCase
 
 from ariadne import make_executable_schema, MutationType
 from graphql import graphql_sync
 
 from ariadne_jwt import (GenericScalar, jwt_schema, resolve_verify, resolve_refresh, resolve_token_auth)
-from ariadne_jwt.settings import env
 from ariadne_jwt.utils import jwt_payload, jwt_encode
 
 
