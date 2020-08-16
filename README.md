@@ -144,3 +144,23 @@ mutation TokenAuth($username: String!, $password: String!) {
     }
 }
 ~~~
+
+# Writing tests
+~~~python
+from django.contrib.auth import get_user_model
+from ariadne_jwt.testcases import JSONWebTokenTestCase
+class UserTests(JSONWebTokenTestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(username='test', password='dolphins')
+        self.client.authenticate(self.user)
+        self.client.schema(type_defs, resolvers, directives=directives)
+    def test_users(self):
+            query = '''
+            query GetUsers($username: String) {
+                users(username: $username) {
+                    id
+                }
+            }
+            '''
+            self.client.execute(query, variables={'username': self.user.username})
+~~~

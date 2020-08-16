@@ -1,37 +1,19 @@
-from unittest import mock
-
 from django.contrib.auth import get_user_model
-from django.test import Client, RequestFactory, TestCase
+from django.test import RequestFactory, testcases
 
-from ariadne import make_executable_schema, MutationType
-from graphql import graphql_sync
+from ariadne import MutationType
 
-from ariadne_jwt import (GenericScalar, jwt_schema, resolve_verify, resolve_refresh, resolve_token_auth)
+from ariadne_jwt.testcases import JSONWebTokenTestCase
 from ariadne_jwt.utils import jwt_payload, jwt_encode
+from ariadne_jwt import (GenericScalar, jwt_schema, resolve_verify, resolve_refresh, resolve_token_auth)
 
 
-class GraphQLRequestFactory(RequestFactory):
-
-    def execute(self, query, **kwargs):
-        return graphql_sync(self._schema, query, variable_values=kwargs, context_value=mock.MagicMock())
-
-
-class GraphQLClient(GraphQLRequestFactory, Client):
-
-    def __init__(self, **defaults):
-        super().__init__(**defaults)
-        self._schema = None
-
-    def schema(self, **kwargs):
-        self._schema = make_executable_schema(kwargs.get('type_defs'), kwargs.get('resolvers'))
-
-
-class UserTestCase(TestCase):
+class UserTestCase(testcases.TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(username='test', password='dolphins')
 
 
-class GraphQLJWTTestCase(UserTestCase):
+class TestCase(UserTestCase):
 
     def setUp(self):
         super().setUp()
@@ -40,9 +22,7 @@ class GraphQLJWTTestCase(UserTestCase):
         self.factory = RequestFactory()
 
 
-class GraphQLSchemaTestCase(GraphQLJWTTestCase):
-    client_class = GraphQLClient
-
+class SchemaTestCase(TestCase, JSONWebTokenTestCase):
     type_defs = '''
                  type Query {
                     test_query: GenericScalar
@@ -60,4 +40,4 @@ class GraphQLSchemaTestCase(GraphQLJWTTestCase):
         mutation.set_field('refreshToken', resolve_refresh)
         mutation.set_field('verifyToken', resolve_verify)
         mutation.set_field('tokenAuth', resolve_token_auth)
-        self.client.schema(type_defs=self.type_defs, resolvers=[mutation, GenericScalar])
+        self.client.schema(self.type_defs, mutation, GenericScalar)

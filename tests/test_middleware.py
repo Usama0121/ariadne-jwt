@@ -1,12 +1,15 @@
 import json
 from unittest import mock
+
 from django.http import JsonResponse
-from .testcases import GraphQLJWTTestCase
+
 from ariadne_jwt.middleware import JSONWebTokenMiddleware
 from ariadne_jwt.settings import jwt_settings
 
+from .testcases import TestCase
 
-class MiddlewareTests(GraphQLJWTTestCase):
+
+class MiddlewareTests(TestCase):
 
     def setUp(self):
         super().setUp()

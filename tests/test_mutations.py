@@ -5,11 +5,11 @@ from ariadne_jwt.settings import jwt_settings
 from ariadne_jwt.shortcuts import get_token
 from ariadne_jwt.utils import get_payload
 
-from .testcases import GraphQLSchemaTestCase
+from .testcases import SchemaTestCase
 from .decorators import override_jwt_settings
 
 
-class TokenAuthTests(GraphQLSchemaTestCase):
+class TokenAuthTests(SchemaTestCase):
     def setUp(self):
         self.query = '''
         mutation TokenAuth($username: String!, $password: String!) {
@@ -21,7 +21,7 @@ class TokenAuthTests(GraphQLSchemaTestCase):
         super().setUp()
 
     def test_token_auth(self):
-        response = self.client.execute(self.query, **{
+        response = self.client.execute(self.query, {
             'username': self.user.get_username(),
             'password': 'dolphins',
         })
@@ -30,7 +30,7 @@ class TokenAuthTests(GraphQLSchemaTestCase):
         self.assertEqual(self.user.get_username(), payload['username'])
 
     def test_token_auth_invalid_credentials(self):
-        response = self.client.execute(self.query, **{
+        response = self.client.execute(self.query, {
             'username': self.user.get_username(),
             'password': 'wrong',
         })
@@ -38,7 +38,7 @@ class TokenAuthTests(GraphQLSchemaTestCase):
         self.assertTrue(response.errors)
 
 
-class VerifyTokenTests(GraphQLSchemaTestCase):
+class VerifyTokenTests(SchemaTestCase):
 
     def setUp(self):
         self.query = '''
@@ -60,7 +60,7 @@ class VerifyTokenTests(GraphQLSchemaTestCase):
         self.assertTrue(response.errors)
 
 
-class RefreshTokenTests(GraphQLSchemaTestCase):
+class RefreshTokenTests(SchemaTestCase):
     def setUp(self):
         self.query = '''
         mutation RefreshToken($token: String!) {

@@ -1,10 +1,11 @@
-from .testcases import GraphQLJWTTestCase
-from ariadne_jwt.backends import JSONWebTokenBackend
-from ariadne_jwt.exceptions import GraphQLJWTError
 from ariadne_jwt.settings import jwt_settings
+from ariadne_jwt.exceptions import GraphQLJWTError
+from ariadne_jwt.backends import JSONWebTokenBackend
+
+from .testcases import TestCase
 
 
-class BackendsTests(GraphQLJWTTestCase):
+class BackendsTests(TestCase):
 
     def test_authenticate(self):
         headers = {
