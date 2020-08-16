@@ -5,7 +5,7 @@ from .settings import jwt_settings
 from .decorators import token_auth
 from .shortcuts import get_token
 from .utils import get_payload, get_user_by_payload
-from .refresh_token.mutations import resolve_long_running_refresh_token, resolve_revoke
+from .refresh_token.mutations import resolve_refresh_token, resolve_revoke
 
 __all__ = ['resolve_verify', 'resolve_refresh', 'resolve_revoke', 'resolve_token_auth', 'jwt_schema']
 
@@ -24,7 +24,7 @@ jwt_schema = '''
         payload: GenericScalar
     }
 '''
-if jwt_settings.JWT_LONG_TIME_REFRESH:
+if jwt_settings.JWT_LONG_RUNNING_REFRESH_TOKEN:
     jwt_schema += '''
     extend type RefreshToken {
         refresh_token: String
@@ -56,8 +56,8 @@ def resolve_keep_alive_refresh_token(obj, info, token, **kwargs):
 
 
 def resolve_refresh(obj, info, token, **kwargs):
-    return (resolve_long_running_refresh_token(obj, info, token, **kwargs)
-            if jwt_settings.JWT_LONG_TIME_REFRESH
+    return (resolve_refresh_token(obj, info, token, **kwargs)
+            if jwt_settings.JWT_LONG_RUNNING_REFRESH_TOKEN
             else resolve_keep_alive_refresh_token(obj, info, token, **kwargs))
 
 

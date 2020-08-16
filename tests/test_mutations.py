@@ -1,5 +1,6 @@
+from contextlib import contextmanager
 from datetime import datetime, timedelta
-from unittest.mock import patch
+from unittest import mock
 
 from ariadne_jwt.settings import jwt_settings
 from ariadne_jwt.shortcuts import get_token
@@ -7,6 +8,18 @@ from ariadne_jwt.utils import get_payload
 
 from .testcases import SchemaTestCase
 from .decorators import override_jwt_settings
+
+
+@contextmanager
+def back_to_the_future(**kwargs):
+    with mock.patch('ariadne_jwt.utils.datetime') as datetime_mock:
+        datetime_mock.utcnow.return_value = datetime.utcnow() + timedelta(**kwargs)
+        yield datetime_mock
+
+
+def refresh_expired():
+    expires = jwt_settings.JWT_REFRESH_EXPIRATION_DELTA.total_seconds()
+    return back_to_the_future(seconds=1 + expires)
 
 
 class TokenAuthTests(SchemaTestCase):
@@ -73,8 +86,7 @@ class RefreshTokenTests(SchemaTestCase):
         super().setUp()
 
     def test_refresh(self):
-        with patch('ariadne_jwt.utils.datetime') as datetime_mock:
-            datetime_mock.utcnow.return_value = datetime.utcnow() + timedelta(seconds=1)
+        with back_to_the_future(seconds=1):
             response = self.client.execute(self.query, token=self.token)
 
         data = response.data['refreshToken']
@@ -84,19 +96,16 @@ class RefreshTokenTests(SchemaTestCase):
         self.assertNotEqual(self.token, token)
         self.assertEqual(self.user.get_username(), data['payload']['username'])
         self.assertEqual(self.payload['origIat'], payload['origIat'])
+        self.assertLess(self.payload['exp'], payload['exp'])
 
     def test_refresh_expired(self):
-        with patch('ariadne_jwt.utils.datetime') as datetime_mock:
-            datetime_mock.utcnow.return_value = (datetime.utcnow() +
-                                                 jwt_settings.JWT_REFRESH_EXPIRATION_DELTA +
-                                                 timedelta(seconds=1))
-
+        with refresh_expired():
             response = self.client.execute(self.query, token=self.token)
 
         self.assertTrue(response.errors)
 
     @override_jwt_settings(JWT_ALLOW_REFRESH=False)
-    def test_refresh_error(self, *args):
+    def test_refresh_error(self):
         token = get_token(self.user)
         response = self.client.execute(self.query, token=token)
         self.assertTrue(response.errors)
