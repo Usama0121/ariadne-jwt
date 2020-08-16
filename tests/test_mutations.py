@@ -48,7 +48,7 @@ class TokenAuthTests(SchemaTestCase):
             'password': 'wrong',
         })
 
-        self.assertTrue(response.errors)
+        self.assertIsNotNone(response.errors)
 
 
 class VerifyTokenTests(SchemaTestCase):
@@ -70,7 +70,7 @@ class VerifyTokenTests(SchemaTestCase):
 
     def test_verify_invalid_token(self):
         response = self.client.execute(self.query, token='invalid')
-        self.assertTrue(response.errors)
+        self.assertIsNotNone(response.errors)
 
 
 class RefreshTokenTests(SchemaTestCase):
@@ -102,10 +102,10 @@ class RefreshTokenTests(SchemaTestCase):
         with refresh_expired():
             response = self.client.execute(self.query, token=self.token)
 
-        self.assertTrue(response.errors)
+        self.assertIsNotNone(response.errors)
 
     @override_jwt_settings(JWT_ALLOW_REFRESH=False)
     def test_refresh_error(self):
         token = get_token(self.user)
         response = self.client.execute(self.query, token=token)
-        self.assertTrue(response.errors)
+        self.assertIsNotNone(response.errors)

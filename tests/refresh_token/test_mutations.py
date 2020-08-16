@@ -68,7 +68,7 @@ class RefreshTests(SchemaTestCase):
         with refresh_expired():
             response = self.client.execute(self.query, {'refreshToken': self.refresh_token.token})
 
-        self.assertTrue(response.errors)
+        self.assertIsNotNone(response.errors)
 
 
 class RevokeTests(SchemaTestCase):
@@ -92,4 +92,4 @@ class RevokeTests(SchemaTestCase):
 
         self.refresh_token.refresh_from_db()
         self.assertIsNotNone(self.refresh_token.revoked)
-        self.assertTrue(response.data['revokeToken']['revoked'])
+        self.assertIsNotNone(response.data['revokeToken']['revoked'])
