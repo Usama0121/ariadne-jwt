@@ -8,6 +8,8 @@ from promise import Promise, is_thenable
 
 from . import exceptions
 from .shortcuts import get_token
+from .settings import jwt_settings
+from .utils import get_authorization_header
 
 __all__ = [
     'user_passes_test',
@@ -70,6 +72,10 @@ def token_auth(f):
             return payload
 
         username = kwargs.get(get_user_model().USERNAME_FIELD)
+
+        if get_authorization_header(info.context.get('request')) is not None:
+            del info.context.get('request').Meta[jwt_settings.JWT_AUTH_HEADER]
+
         user = authenticate(info.context.get('request'), username=username, password=password)
 
         if user is None:

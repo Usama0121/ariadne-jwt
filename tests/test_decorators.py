@@ -4,6 +4,8 @@ from django.contrib.auth import models
 from promise import Promise, is_thenable
 
 from ariadne_jwt import decorators, exceptions
+from ariadne_jwt.settings import jwt_settings
+from ariadne_jwt.shortcuts import get_token
 
 from .testcases import UserTestCase
 
@@ -82,11 +84,23 @@ class DecoratorsTests(UserTestCase):
         with self.assertRaises(exceptions.PermissionDenied):
             wrapped(info_mock(self.user))
 
-    def test_token_auth_thenable(self, *args):
+    def test_token_auth_already_authenticated(self):
         @decorators.token_auth
         def wrapped(root, info, **kwargs):
             return Promise()
 
-        result = wrapped(None, mock.Mock(), password='dolphins', username=self.user.get_username())
+        info_mock = mock.MagicMock()
+        token = get_token(self.user)
+
+        headers = {
+            jwt_settings.JWT_AUTH_HEADER: '{0} {1}'.format(
+                jwt_settings.JWT_AUTH_HEADER_PREFIX,
+                token),
+        }
+
+        type(info_mock.context.get('request')).META = mock.PropertyMock(return_value=headers)
+
+        result = wrapped(None, info_mock, password='dolphins', username=self.user.get_username())
 
         self.assertTrue(is_thenable(result))
+        info_mock.context.get('request').Meta.__delitem__.assert_called_once_with(jwt_settings.JWT_AUTH_HEADER)

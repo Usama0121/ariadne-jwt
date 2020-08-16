@@ -1,5 +1,4 @@
 from ariadne import QueryType
-from django.contrib.auth import get_user_model
 
 from ariadne_jwt.decorators import login_required
 

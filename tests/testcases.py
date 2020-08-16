@@ -15,8 +15,7 @@ from ariadne_jwt.utils import jwt_payload, jwt_encode
 class GraphQLRequestFactory(RequestFactory):
 
     def execute(self, query, **kwargs):
-        request = WSGIRequest
-        return graphql_sync(self._schema, query, variable_values=kwargs, context_value=mock.Mock())
+        return graphql_sync(self._schema, query, variable_values=kwargs, context_value=mock.MagicMock())
 
 
 class GraphQLClient(GraphQLRequestFactory, Client):
