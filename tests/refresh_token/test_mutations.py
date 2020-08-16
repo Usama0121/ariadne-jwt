@@ -3,7 +3,7 @@ from ariadne_jwt.shortcuts import create_refresh_token, get_refresh_token
 
 from ..testcases import SchemaTestCase
 from ..decorators import override_jwt_settings
-from ..test_mutations import back_to_the_future, refresh_expired
+from ..context_managers import back_to_the_future, refresh_expired
 
 
 class TokenAuthTests(SchemaTestCase):
