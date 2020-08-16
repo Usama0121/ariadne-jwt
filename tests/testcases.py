@@ -19,7 +19,7 @@ class TestCase(UserTestCase):
         super().setUp()
         self.payload = jwt_payload(self.user)
         self.token = jwt_encode(self.payload)
-        self.factory = RequestFactory()
+        self.request_factory = RequestFactory()
 
 
 class SchemaTestCase(TestCase, JSONWebTokenTestCase):

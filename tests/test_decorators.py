@@ -10,7 +10,7 @@ from .testcases import TestCase
 class DecoratorsTestCase(TestCase):
 
     def info(self, user, **kwargs):
-        request = self.factory.post('/', **kwargs)
+        request = self.request_factory.post('/', **kwargs)
         request.user = user
         return mock.Mock(context={'request': request})
 
