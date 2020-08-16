@@ -5,7 +5,7 @@ from ariadne import MutationType
 
 from ariadne_jwt.testcases import JSONWebTokenTestCase
 from ariadne_jwt.utils import jwt_payload, jwt_encode
-from ariadne_jwt import (GenericScalar, jwt_schema, resolve_verify, resolve_refresh, resolve_token_auth)
+from ariadne_jwt import (GenericScalar, jwt_schema, resolve_verify, resolve_refresh, resolve_revoke, resolve_token_auth)
 
 
 class UserTestCase(testcases.TestCase):
@@ -31,6 +31,7 @@ class SchemaTestCase(TestCase, JSONWebTokenTestCase):
                     verifyToken(token: String!): VerifyToken
                     refreshToken(token: String!): RefreshToken
                     tokenAuth(username: String!, password:String!): TokenAuth
+                    revokeToken(refresh_token: String!): RevokeToken
                  }
                  ''' + jwt_schema
 
@@ -40,4 +41,5 @@ class SchemaTestCase(TestCase, JSONWebTokenTestCase):
         mutation.set_field('refreshToken', resolve_refresh)
         mutation.set_field('verifyToken', resolve_verify)
         mutation.set_field('tokenAuth', resolve_token_auth)
+        mutation.set_field('revokeToken', resolve_revoke)
         self.client.schema(self.type_defs, mutation, GenericScalar)

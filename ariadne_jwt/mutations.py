@@ -17,22 +17,18 @@ jwt_schema = '''
     }
     type RefreshToken {
         token: String
+        refresh_token: String
         payload: GenericScalar
     }
     type TokenAuth {
         token: String
+        refresh_token: String
         payload: GenericScalar
     }
+    type RevokeToken {
+        revoked: Int
+    }
 '''
-if jwt_settings.JWT_LONG_RUNNING_REFRESH_TOKEN:
-    jwt_schema += '''
-    extend type RefreshToken {
-        refresh_token: String
-    }
-    extend type TokenAuth {
-        refresh_token: String
-    }
-    '''
 
 
 def resolve_verify(obj, info, token, **kwargs):
