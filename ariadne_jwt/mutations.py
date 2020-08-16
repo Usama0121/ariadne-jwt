@@ -5,9 +5,9 @@ from .settings import jwt_settings
 from .decorators import token_auth
 from .shortcuts import get_token
 from .utils import get_payload, get_user_by_payload
-from .refresh_token.mutations import resolve_long_running_refresh_token
+from .refresh_token.mutations import resolve_long_running_refresh_token, resolve_revoke
 
-__all__ = ['resolve_verify', 'resolve_refresh', 'resolve_token_auth', 'jwt_schema']
+__all__ = ['resolve_verify', 'resolve_refresh', 'resolve_revoke', 'resolve_token_auth', 'jwt_schema']
 
 jwt_schema = '''
     scalar GenericScalar

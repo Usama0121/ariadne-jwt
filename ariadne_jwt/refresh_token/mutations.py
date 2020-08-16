@@ -36,7 +36,7 @@ def resolve_long_running_refresh_token(obj, info, refresh_token, **kwargs):
     return {'token': token, 'payload': payload, 'refresh_token': refresh_token}
 
 
-def resolve_revoke_token(obj, info, refresh_token, **kwargs):
+def resolve_revoke(obj, info, refresh_token, **kwargs):
     refresh_token = get_refresh_token(refresh_token)
     refresh_token.revoke()
 
