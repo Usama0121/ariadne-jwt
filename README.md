@@ -50,7 +50,7 @@ mutation.set_field('verifyToken', resolve_verify)
 mutation.set_field('refreshToken', resolve_refresh)
 mutation.set_field('tokenAuth', resolve_token_auth)
 
-schema = ariadne.make_executable_schema([type_defs, jwt_schema], [mutation, GenericScalar])
+schema = ariadne.make_executable_schema([type_defs, jwt_schema], mutation, GenericScalar)
 ~~~
 
 
