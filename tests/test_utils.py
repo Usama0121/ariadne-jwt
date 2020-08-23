@@ -1,8 +1,7 @@
 from datetime import timedelta
 from unittest.mock import patch, Mock, PropertyMock
 
-from ariadne_jwt import utils
-from ariadne_jwt.exceptions import JSONWebTokenError
+from ariadne_jwt import exceptions, utils
 from ariadne_jwt.settings import jwt_settings
 
 from .decorators import override_jwt_settings
@@ -54,7 +53,7 @@ class UtilsTests(TestCase):
         payload = utils.jwt_payload(self.user)
         token = utils.jwt_encode(payload)
 
-        with self.assertRaises(JSONWebTokenError):
+        with self.assertRaises(exceptions.JSONWebTokenExpired):
             utils.get_payload(token)
 
     def test_payload_decode_audience_missing(self):
@@ -62,11 +61,11 @@ class UtilsTests(TestCase):
         token = utils.jwt_encode(payload)
 
         with override_jwt_settings(JWT_AUDIENCE='test'):
-            with self.assertRaises(JSONWebTokenError):
+            with self.assertRaises(exceptions.JSONWebTokenError):
                 utils.get_payload(token)
 
     def test_payload_decoding_error(self):
-        with self.assertRaises(JSONWebTokenError):
+        with self.assertRaises(exceptions.JSONWebTokenError):
             utils.get_payload('invalid')
 
     def test_user_by_natural_key_not_exists(self):
@@ -74,12 +73,12 @@ class UtilsTests(TestCase):
         self.assertIsNone(user)
 
     def test_user_by_invalid_payload(self):
-        with self.assertRaises(JSONWebTokenError):
+        with self.assertRaises(exceptions.JSONWebTokenError):
             utils.get_user_by_payload({})
 
     @patch('django.contrib.auth.models.User.is_active', new_callable=PropertyMock, return_value=False)
     def test_user_disabled_by_payload(self, *args):
         payload = utils.jwt_payload(self.user)
 
-        with self.assertRaises(JSONWebTokenError):
+        with self.assertRaises(exceptions.JSONWebTokenError):
             utils.get_user_by_payload(payload)
