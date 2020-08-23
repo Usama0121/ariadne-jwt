@@ -14,7 +14,7 @@ DESCRIPTION = 'JSON Web Token for Ariadne Django'
 URL = 'https://github.com/Usama0121/ariadne-jwt'
 EMAIL = 'aslam0121@gmail.com'
 AUTHOR = 'Muhammad Usama'
-REQUIRES_PYTHON = '>=3.7.0'
+REQUIRES_PYTHON = '>=3.6.0'
 VERSION = None
 
 # What packages are required for this module to be executed?
@@ -134,6 +134,7 @@ setup(
         'Intended Audience :: Developers',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Framework :: Django',
     ],
