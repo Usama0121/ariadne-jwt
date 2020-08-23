@@ -1,3 +1,4 @@
+from unittest import mock
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory, testcases
 
@@ -20,6 +21,11 @@ class TestCase(UserTestCase):
         self.payload = jwt_payload(self.user)
         self.token = jwt_encode(self.payload)
         self.request_factory = RequestFactory()
+
+    def info(self, user, **kwargs):
+        request = self.request_factory.post('/', **kwargs)
+        request.user = user
+        return mock.Mock(context={'request': request})
 
 
 class SchemaTestCase(TestCase, JSONWebTokenTestCase):

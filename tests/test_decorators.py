@@ -1,5 +1,4 @@
-from unittest import mock
-from django.contrib.auth import models
+from django.contrib.auth.models import AnonymousUser, Permission
 
 from ariadne_jwt import decorators, exceptions
 from ariadne_jwt.settings import jwt_settings
@@ -7,15 +6,7 @@ from ariadne_jwt.settings import jwt_settings
 from .testcases import TestCase
 
 
-class DecoratorsTestCase(TestCase):
-
-    def info(self, user, **kwargs):
-        request = self.request_factory.post('/', **kwargs)
-        request.user = user
-        return mock.Mock(context={'request': request})
-
-
-class UserPassesTests(DecoratorsTestCase):
+class UserPassesTests(TestCase):
 
     def test_user_passes_test(self):
         @decorators.user_passes_test(lambda u: u.pk == self.user.pk)
@@ -34,7 +25,7 @@ class UserPassesTests(DecoratorsTestCase):
             wrapped(self.info(self.user))
 
 
-class LoginRequiredTests(DecoratorsTestCase):
+class LoginRequiredTests(TestCase):
 
     def test_login_required(self):
         @decorators.login_required
@@ -50,10 +41,10 @@ class LoginRequiredTests(DecoratorsTestCase):
             """Decorated function"""
 
         with self.assertRaises(exceptions.PermissionDenied):
-            wrapped(self.info(models.AnonymousUser()))
+            wrapped(self.info(AnonymousUser()))
 
 
-class StaffMemberRequiredTests(DecoratorsTestCase):
+class StaffMemberRequiredTests(TestCase):
 
     def test_staff_member_required(self):
         @decorators.staff_member_required
@@ -74,14 +65,14 @@ class StaffMemberRequiredTests(DecoratorsTestCase):
             wrapped(self.info(self.user))
 
 
-class PermissionRequiredTests(DecoratorsTestCase):
+class PermissionRequiredTests(TestCase):
 
     def test_permission_required(self):
         @decorators.permission_required('auth.add_user')
         def wrapped(info):
             """Decorated function"""
 
-        perm = models.Permission.objects.get(codename='add_user')
+        perm = Permission.objects.get(codename='add_user')
         self.user.user_permissions.add(perm)
 
         result = wrapped(self.info(self.user))
@@ -96,7 +87,7 @@ class PermissionRequiredTests(DecoratorsTestCase):
             wrapped(self.info(self.user))
 
 
-class TokenAuthTests(DecoratorsTestCase):
+class TokenAuthTests(TestCase):
 
     def test_already_authenticated(self):
         @decorators.token_auth
@@ -108,7 +99,7 @@ class TokenAuthTests(DecoratorsTestCase):
                 jwt_settings.JWT_AUTH_HEADER_PREFIX,
                 self.token),
         }
-        info_mock = self.info(models.AnonymousUser(), **headers)
+        info_mock = self.info(AnonymousUser(), **headers)
         result = wrapped(None, info_mock, password='dolphins', username=self.user.get_username())
 
         self.assertNotIn(jwt_settings.JWT_AUTH_HEADER, info_mock.context.get('request').META)
