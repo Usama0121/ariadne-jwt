@@ -164,3 +164,11 @@ class UserTests(JSONWebTokenTestCase):
             '''
             self.client.execute(query, variables={'username': self.user.username})
 ~~~
+
+
+# Testing the library
+
+run the following in root directory
+~~~shell script
+python run_tests.py
+~~~
