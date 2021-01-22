@@ -50,7 +50,6 @@ def jwt_decode(token, context=None):
     return jwt.decode(
         token,
         jwt_settings.JWT_SECRET_KEY,
-        jwt_settings.JWT_VERIFY,
         options={
             'verify_exp': jwt_settings.JWT_VERIFY_EXPIRATION
         },
