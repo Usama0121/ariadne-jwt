@@ -70,9 +70,10 @@ def get_authorization_header(request):
 
 
 def get_payload(token, context=None):
+    ExpiredSignatureError = jwt.ExpiredSignatureError if 'ExpiredSignatureError' in dir(jwt.exceptions) else jwt.ExpiredSignature
     try:
         payload = jwt_settings.JWT_DECODE_HANDLER(token, context)
-    except jwt.ExpiredSignature:
+    except ExpiredSignatureError:
         raise exceptions.JSONWebTokenExpired()
     except jwt.DecodeError:
         raise exceptions.JSONWebTokenError(_('Error decoding signature'))
