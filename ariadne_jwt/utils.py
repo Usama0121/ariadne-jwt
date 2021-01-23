@@ -50,7 +50,6 @@ def jwt_decode(token, context=None):
     return jwt.decode(
         token,
         jwt_settings.JWT_SECRET_KEY,
-        jwt_settings.JWT_VERIFY,
         options={
             'verify_exp': jwt_settings.JWT_VERIFY_EXPIRATION
         },
@@ -72,7 +71,7 @@ def get_authorization_header(request):
 def get_payload(token, context=None):
     try:
         payload = jwt_settings.JWT_DECODE_HANDLER(token, context)
-    except jwt.ExpiredSignature:
+    except ExpiredSignatureError:
         raise exceptions.JSONWebTokenExpired()
     except jwt.DecodeError:
         raise exceptions.JSONWebTokenError(_('Error decoding signature'))
