@@ -18,7 +18,7 @@ def jwt_payload(user, context=None):
 
     payload = {
         user.USERNAME_FIELD: username,
-        'exp': datetime.utcnow() + jwt_settings.JWT_EXPIRATION_DELTA
+        'exp': (datetime.utcnow() + jwt_settings.JWT_EXPIRATION_DELTA).timestamp()
     }
 
     if jwt_settings.JWT_ALLOW_REFRESH:
