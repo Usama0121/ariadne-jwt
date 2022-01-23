@@ -100,6 +100,39 @@ class TokenAuthTests(TestCase):
                 self.token),
         }
         info_mock = self.info(AnonymousUser(), **headers)
-        result = wrapped(None, info_mock, password='dolphins', username=self.user.get_username())
+        result = wrapped(None, info_mock, password='dolphins',
+                         username=self.user.get_username())
 
-        self.assertNotIn(jwt_settings.JWT_AUTH_HEADER, info_mock.context.get('request').META)
+        self.assertNotIn(jwt_settings.JWT_AUTH_HEADER,
+                         info_mock.context.get('request').META)
+
+
+class StackedDecoratorsTests(TestCase):
+
+    def test_login_and_staff_member_required(self):
+        @decorators.login_required
+        @decorators.staff_member_required
+        def wrapped(info):
+            """Decorated function"""
+
+        self.user.is_staff = True
+        result = wrapped(self.info(self.user))
+        self.assertIsNone(result)
+
+    def test_permission_denied(self):
+        @decorators.login_required
+        @decorators.staff_member_required
+        def wrapped(info):
+            """Decorated function"""
+
+        with self.assertRaises(exceptions.PermissionDenied):
+            wrapped(self.info(AnonymousUser()))
+
+    def test_staff_member_denied(self):
+        @decorators.login_required
+        @decorators.staff_member_required
+        def wrapped(info):
+            """Decorated function"""
+
+        with self.assertRaises(exceptions.PermissionDenied):
+            wrapped(self.info(self.user))
