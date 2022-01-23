@@ -3,6 +3,7 @@ from functools import wraps
 import six
 from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import ugettext as _
+from graphql import GraphQLResolveInfo
 
 from promise import Promise, is_thenable
 
@@ -24,7 +25,8 @@ __all__ = [
 def context(f):
     def decorator(func):
         def wrapper(*args, **kwargs):
-            info = args[f.__code__.co_varnames.index('info')]
+            info = next(arg for arg in args
+                        if isinstance(arg, GraphQLResolveInfo))
             return func(info.context, *args, **kwargs)
 
         return wrapper
@@ -79,7 +81,9 @@ def token_auth(f):
         if get_authorization_header(info.context.get('request')) is not None:
             del info.context.get('request').META[jwt_settings.JWT_AUTH_HEADER]
 
-        user = authenticate(info.context.get('request'), username=username, password=password)
+        user = authenticate(info.context.get('request'),
+                            username=username,
+                            password=password)
 
         if user is None:
             raise exceptions.JSONWebTokenError(

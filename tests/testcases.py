@@ -3,15 +3,18 @@ from django.contrib.auth import get_user_model
 from django.test import RequestFactory, testcases
 
 from ariadne import MutationType
+from graphql import GraphQLResolveInfo
 
 from ariadne_jwt.testcases import JSONWebTokenTestCase
 from ariadne_jwt.utils import jwt_payload, jwt_encode
-from ariadne_jwt import (GenericScalar, jwt_schema, resolve_verify, resolve_refresh, resolve_revoke, resolve_token_auth)
+from ariadne_jwt import (GenericScalar, jwt_schema, resolve_verify,
+                         resolve_refresh, resolve_revoke, resolve_token_auth)
 
 
 class UserTestCase(testcases.TestCase):
     def setUp(self):
-        self.user = get_user_model().objects.create_user(username='test', password='dolphins')
+        self.user = get_user_model().objects.create_user(username='test',
+                                                         password='dolphins')
 
 
 class TestCase(UserTestCase):
@@ -25,7 +28,7 @@ class TestCase(UserTestCase):
     def info(self, user, **kwargs):
         request = self.request_factory.post('/', **kwargs)
         request.user = user
-        return mock.Mock(context={'request': request})
+        return mock.Mock(context={'request': request}, spec=GraphQLResolveInfo)
 
 
 class SchemaTestCase(TestCase, JSONWebTokenTestCase):
