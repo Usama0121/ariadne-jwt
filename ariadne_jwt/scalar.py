@@ -1,6 +1,12 @@
 from ariadne.scalars import ScalarType
-from graphql.type.scalars import MAX_INT, MIN_INT
-from graphql import StringValueNode, BooleanValueNode, IntValueNode, FloatValueNode, ListValueNode, ObjectValueNode
+from graphql import (StringValueNode, BooleanValueNode, IntValueNode,
+                     FloatValueNode, ListValueNode, ObjectValueNode)
+
+try:
+    from graphql.type.scalars import (MAX_INT as GRAPHQL_MAX_INT,
+                                      MIN_INT as GRAPHQL_MIN_INT)
+except ImportError:
+    from graphql.type.scalars import GRAPHQL_MAX_INT, GRAPHQL_MIN_INT
 
 GenericScalar = ScalarType('GenericScalar')
 
@@ -17,7 +23,7 @@ def parse_literal(ast):
         return ast.value
     elif isinstance(ast, IntValueNode):
         num = int(ast.value)
-        if MIN_INT <= num <= MAX_INT:
+        if GRAPHQL_MAX_INT <= num <= GRAPHQL_MIN_INT:
             return num
     elif isinstance(ast, FloatValueNode):
         return float(ast.value)
