@@ -1,5 +1,8 @@
 from django.apps import AppConfig
-from django.utils.translation import ugettext_lazy as _
+try:
+    from django.utils.translation import ugettext as _
+except ImportError:
+    from django.utils.translation import gettext as _
 
 
 class RefreshTokenConfig(AppConfig):

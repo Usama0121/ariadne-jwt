@@ -1,5 +1,8 @@
 from django.contrib.admin import SimpleListFilter
-from django.utils.translation import ugettext_lazy as _
+try:
+    from django.utils.translation import ugettext_lazy as _
+except ImportError:
+    from django.utils.translation import gettext_lazy as _
 
 __all__ = [
     'ExpiredFilter',

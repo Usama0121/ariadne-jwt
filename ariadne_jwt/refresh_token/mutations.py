@@ -1,6 +1,9 @@
 from calendar import timegm
 
-from django.utils.translation import ugettext as _
+try:
+    from django.utils.translation import ugettext as _
+except ImportError:
+    from django.utils.translation import gettext as _
 
 from .. import exceptions
 from ..settings import jwt_settings
