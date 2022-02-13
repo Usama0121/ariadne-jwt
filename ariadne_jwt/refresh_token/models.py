@@ -66,6 +66,7 @@ class AbstractRefreshToken(models.Model):
             sender=AbstractRefreshToken,
             refresh_token=self)
 
+        self.revoke()
         return refresh_token
 
 

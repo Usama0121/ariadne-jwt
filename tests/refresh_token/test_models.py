@@ -3,8 +3,8 @@ from ariadne_jwt.refresh_token.models import AbstractRefreshToken
 from ariadne_jwt.settings import jwt_settings
 from ariadne_jwt.shortcuts import create_refresh_token
 
-from ..testcases import UserTestCase
 from ..context_managers import catch_signal, refresh_expired
+from ..testcases import UserTestCase
 
 
 class AbstractRefreshTokenTests(UserTestCase):
@@ -39,11 +39,13 @@ class AbstractRefreshTokenTests(UserTestCase):
             refresh_token=self.refresh_token)
 
     def test_rotate(self):
+        self.assertTrue(self.refresh_token.revoked is None)
         with catch_signal(signals.refresh_token_rotated) as handler:
             refresh_token = self.refresh_token.rotate()
 
         self.assertEqual(refresh_token.user, self.refresh_token.user)
         self.assertNotEqual(refresh_token.token, self.refresh_token.token)
+        self.assertTrue(self.refresh_token.revoked is not None)
 
         handler.assert_called_once_with(
             sender=AbstractRefreshToken,
