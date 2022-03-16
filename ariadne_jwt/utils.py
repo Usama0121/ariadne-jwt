@@ -4,7 +4,7 @@ from calendar import timegm
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from .settings import jwt_settings
 from . import exceptions

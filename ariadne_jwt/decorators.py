@@ -2,7 +2,7 @@ from functools import wraps
 
 import six
 from django.contrib.auth import authenticate, get_user_model
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from graphql import GraphQLResolveInfo
 
 from promise import Promise, is_thenable
