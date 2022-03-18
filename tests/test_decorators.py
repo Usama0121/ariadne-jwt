@@ -106,6 +106,21 @@ class TokenAuthTests(TestCase):
         self.assertNotIn(jwt_settings.JWT_AUTH_HEADER,
                          info_mock.context.get('request').META)
 
+    def test_payload_exists(self):
+        @decorators.token_auth
+        def wrapped(root, info, **kwargs):
+            return {}
+
+        headers = {
+            jwt_settings.JWT_AUTH_HEADER: '{0} {1}'.format(
+                jwt_settings.JWT_AUTH_HEADER_PREFIX,
+                self.token),
+        }
+        info_mock = self.info(AnonymousUser(), **headers)
+        result = wrapped(None, info_mock, password='dolphins',
+                         username=self.user.get_username())
+        self.assertIsNotNone(result.get('payload'))
+
 
 class StackedDecoratorsTests(TestCase):
 

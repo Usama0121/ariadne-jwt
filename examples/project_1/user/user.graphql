@@ -16,6 +16,7 @@ extend type Mutation {
     verifyToken(token: String!): VerifyToken
     refreshToken(token: String!): RefreshToken
     tokenAuth(username: String!, password:String!): TokenAuth
+    revokeToken(refresh_token: String): RevokeToken
 }
 extend type TokenAuth {
     user: UserNode

@@ -8,7 +8,6 @@ from graphql import GraphQLResolveInfo
 from promise import Promise, is_thenable
 
 from . import exceptions
-from .shortcuts import get_token
 from .settings import jwt_settings
 from .utils import get_authorization_header
 from .refresh_token.shortcuts import create_refresh_token
@@ -71,7 +70,10 @@ def token_auth(f):
     def wrapper(root, info, password, **kwargs):
         def on_resolve(values):
             user, payload = values
-            payload['token'] = get_token(user, info.context)
+            payload['payload'] = jwt_settings.JWT_PAYLOAD_HANDLER(user,
+                                                                  info.context)
+            payload['token'] = jwt_settings.JWT_ENCODE_HANDLER(
+                payload['payload'], info.context)
             if jwt_settings.JWT_LONG_RUNNING_REFRESH_TOKEN:
                 payload['refresh_token'] = create_refresh_token(user).token
             return payload
